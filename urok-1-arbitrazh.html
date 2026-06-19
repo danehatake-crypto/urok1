@@ -1,0 +1,1184 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Урок 1 — Старт в арбитраже: Rapira, Bybit и блокировки Т1/Т2</title>
+<meta name="description" content="Первый урок курса по арбитражу криптовалют: пошаговая регистрация на Rapira и Bybit, безопасность аккаунта и как не попасть под блокировки Т1 и Т2.">
+<meta name="color-scheme" content="dark">
+
+<!-- Шрифты: Unbounded (дисплей, кириллица), Manrope (тело), JetBrains Mono (данные/метки) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   ТОКЕНЫ ДИЗАЙНА — 2026
+   Тёплый градиент (золото→коралл) = деньги/рост.
+   Холодный (фиолет→циан) = техника/безопасность.
+   Палитра намеренно НЕ дефолтная «чёрный + кислотно-зелёный».
+   ============================================================ */
+:root{
+  --bg:#07080F;
+  --bg-2:#0A0C18;
+  --card:rgba(20,24,46,.62);
+  --card-solid:#11152C;
+  --card-2:rgba(26,31,58,.6);
+  --border:rgba(255,255,255,.09);
+  --border-strong:rgba(255,255,255,.16);
+  --glass-hi:rgba(255,255,255,.10);
+
+  --text:#EDEFFA;
+  --muted:#9AA0BD;
+  --faint:#6B7193;
+
+  --gold:#FFC93C;
+  --coral:#FF7A59;
+  --violet:#8C7CFF;
+  --cyan:#54D6FF;
+  --mint:#36DDA0;
+  --amber:#FFB23E;   /* Т1 — осторожно */
+  --red:#FF5C6C;     /* Т2 — опасно */
+
+  --grad-win:linear-gradient(100deg,#FFCB43,#FF7A52);
+  --grad-cool:linear-gradient(120deg,#8C7CFF,#54D6FF);
+  --grad-aurora:linear-gradient(100deg,#FFD66B 0%,#FF8A6B 48%,#A98BFF 100%);
+
+  --radius:22px;
+  --radius-sm:15px;
+  --shadow:0 30px 70px -34px rgba(0,0,0,.85);
+  --shadow-soft:0 18px 40px -24px rgba(0,0,0,.7);
+  --maxw:880px;
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* === Aurora-mesh фон: несколько мягких пятен === */
+.aurora{position:fixed;inset:0;z-index:-3;pointer-events:none;overflow:hidden}
+.aurora b{position:absolute;border-radius:50%;filter:blur(100px);opacity:.55}
+.aurora .a1{width:560px;height:560px;top:-200px;left:-160px;background:radial-gradient(circle,#FFA83C,transparent 70%);opacity:.16;animation:float1 22s ease-in-out infinite}
+.aurora .a2{width:620px;height:620px;bottom:-260px;right:-180px;background:radial-gradient(circle,#7C6CFF,transparent 70%);opacity:.20;animation:float2 26s ease-in-out infinite}
+.aurora .a3{width:480px;height:480px;top:38%;left:46%;transform:translate(-50%,-50%);background:radial-gradient(circle,#54D6FF,transparent 72%);opacity:.10;animation:float3 30s ease-in-out infinite}
+@keyframes float1{50%{transform:translate(40px,60px) scale(1.1)}}
+@keyframes float2{50%{transform:translate(-50px,-40px) scale(1.08)}}
+@keyframes float3{50%{transform:translate(-50%,-50%) translate(60px,-30px) scale(1.12)}}
+
+/* === Зернистая текстура (grain) — модный приём 2025–26 === */
+.grain{position:fixed;inset:0;z-index:-2;pointer-events:none;opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+img{max-width:100%}
+a{color:var(--cyan);text-decoration:none}
+a:hover{text-decoration:underline}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 20px}
+
+/* типографика */
+h1,h2,h3{font-family:"Unbounded",sans-serif;line-height:1.08;margin:0;letter-spacing:-.01em}
+h2{font-size:clamp(1.8rem,5.6vw,2.7rem);font-weight:700;margin-bottom:14px}
+h3{font-size:clamp(1.12rem,3.6vw,1.35rem);font-weight:600;letter-spacing:0}
+p{margin:0 0 16px}
+.lead{font-size:1.07rem;color:var(--muted)}
+.mono{font-family:"JetBrains Mono",monospace}
+.eyebrow{
+  font-family:"JetBrains Mono",monospace;font-size:.74rem;font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--coral);
+  display:inline-flex;align-items:center;gap:9px;margin-bottom:14px;
+}
+.eyebrow::before{content:"";width:26px;height:1px;background:linear-gradient(90deg,var(--coral),transparent)}
+.grad{background:var(--grad-aurora);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* стеклянная карточка с верхней световой кромкой */
+.glass{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  box-shadow:var(--shadow-soft), inset 0 1px 0 var(--glass-hi);
+  position:relative;
+}
+
+/* ============================================================
+   ВЕРХНЯЯ ПОЛОСА ПРОГРЕССА + ЛИПКИЙ БАР
+   ============================================================ */
+#scrollbar{position:fixed;top:0;left:0;height:3px;width:0;z-index:60;background:var(--grad-win);box-shadow:0 0 14px rgba(255,150,60,.6)}
+#topbar{
+  position:sticky;top:0;z-index:50;height:52px;display:flex;align-items:center;
+  justify-content:space-between;padding:0 16px;
+  background:rgba(7,8,15,.66);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+  border-bottom:1px solid var(--border);
+}
+.tb-brand{display:flex;align-items:center;gap:10px;font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.tb-brand .mk{width:24px;height:24px;border-radius:7px;background:var(--grad-win);display:grid;place-items:center;font-family:"Unbounded";font-weight:800;color:#1a0e00;font-size:.78rem}
+.tb-brand b{color:var(--text)}
+.tb-prog{display:flex;align-items:center;gap:10px}
+.tb-prog .lbl{font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted)}
+.tb-prog .lbl b{color:var(--gold)}
+.ring{--p:0;width:32px;height:32px;border-radius:50%;
+  background:
+    radial-gradient(closest-side,var(--bg) 70%,transparent 71%),
+    conic-gradient(var(--gold) calc(var(--p)*1%),rgba(255,255,255,.1) 0);
+  display:grid;place-items:center;flex:0 0 auto;transition:--p .5s ease;
+}
+@property --p{syntax:'<number>';inherits:false;initial-value:0}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero{padding:60px 0 44px;position:relative}
+.lesson-tag{
+  display:inline-flex;align-items:center;gap:10px;padding:7px 14px 7px 8px;border-radius:100px;
+  background:var(--card);border:1px solid var(--border);font-family:"JetBrains Mono",monospace;
+  font-size:.74rem;letter-spacing:.08em;color:var(--muted);margin-bottom:24px;
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.lesson-tag .num{
+  background:var(--grad-win);color:#1a0e00;font-weight:700;border-radius:100px;
+  padding:3px 9px;letter-spacing:0;
+}
+.hero h1{font-size:clamp(2.6rem,9.2vw,4.6rem);font-weight:800;margin-bottom:20px;letter-spacing:-.025em}
+.hero .grad{position:relative;background:var(--grad-aurora);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 7s linear infinite}
+@keyframes shine{to{background-position:200% 0}}
+.hero .sub{font-size:1.14rem;color:var(--muted);max-width:36ch}
+.welcome{
+  margin:26px 0 0;padding:18px 20px;border-radius:var(--radius-sm);
+  background:linear-gradient(180deg,rgba(255,201,60,.07),rgba(255,122,89,.03));
+  border:1px solid var(--border);border-left:3px solid var(--coral);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.welcome p{margin:0;color:#dfe2f0;font-size:1rem}
+
+/* живой тикер курса в hero */
+.ticker{display:flex;flex-wrap:wrap;gap:9px;margin-top:22px}
+.tk{display:inline-flex;align-items:center;gap:8px;padding:8px 13px;border-radius:100px;background:var(--card);border:1px solid var(--border);font-family:"JetBrains Mono",monospace;font-size:.8rem;color:var(--muted);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.tk .px{color:var(--text);font-weight:700}
+.tk .up{color:var(--mint)}
+.tk .dn{color:var(--red)}
+.tk .live{width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 0 rgba(54,221,160,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 7px rgba(54,221,160,0)}100%{box-shadow:0 0 0 0 rgba(54,221,160,0)}}
+
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.chip{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:100px;
+  background:var(--card);border:1px solid var(--border);font-size:.85rem;color:var(--muted);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+}
+.chip svg{width:16px;height:16px;color:var(--gold)}
+.scrollcue{margin-top:38px;display:flex;align-items:center;gap:10px;color:var(--faint);font-size:.82rem;font-family:"JetBrains Mono",monospace}
+.scrollcue .mouse{width:20px;height:32px;border:2px solid var(--faint);border-radius:12px;position:relative}
+.scrollcue .mouse::after{content:"";position:absolute;top:6px;left:50%;transform:translateX(-50%);width:3px;height:6px;border-radius:3px;background:var(--faint);animation:wheel 1.6s ease-in-out infinite}
+@keyframes wheel{0%{opacity:0;transform:translate(-50%,0)}40%{opacity:1}80%{opacity:0;transform:translate(-50%,8px)}}
+
+/* ============================================================
+   СЕКЦИИ / РАЗДЕЛИТЕЛИ
+   ============================================================ */
+section{padding:48px 0;position:relative}
+.divider{height:1px;background:linear-gradient(90deg,transparent,var(--border-strong),transparent);max-width:var(--maxw);margin:0 auto}
+.sec-no{font-family:"JetBrains Mono",monospace;font-size:.8rem;letter-spacing:.16em;color:var(--faint);margin-bottom:8px;display:block}
+
+/* карточки */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 var(--glass-hi)}
+
+/* ============================================================
+   РОУДМАП "ЧТО ОСВОИШЬ" — bento
+   ============================================================ */
+.roadmap{display:grid;gap:13px;margin-top:8px}
+.rm-item{
+  display:flex;gap:16px;align-items:flex-start;padding:18px 20px;border-radius:var(--radius-sm);
+  background:var(--card);border:1px solid var(--border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  box-shadow:inset 0 1px 0 var(--glass-hi);transition:transform .3s, border-color .3s;
+}
+.rm-item:hover{transform:translateY(-3px);border-color:var(--border-strong)}
+.rm-item .rm-ic{
+  flex:0 0 auto;width:44px;height:44px;border-radius:13px;display:grid;place-items:center;
+  background:rgba(140,124,255,.14);color:var(--violet);box-shadow:inset 0 0 0 1px rgba(140,124,255,.18);
+}
+.rm-item .rm-ic.gold{background:rgba(255,201,60,.14);color:var(--gold);box-shadow:inset 0 0 0 1px rgba(255,201,60,.18)}
+.rm-item .rm-ic.cyan{background:rgba(84,214,255,.14);color:var(--cyan);box-shadow:inset 0 0 0 1px rgba(84,214,255,.18)}
+.rm-item .rm-ic.red{background:rgba(255,92,108,.14);color:var(--red);box-shadow:inset 0 0 0 1px rgba(255,92,108,.18)}
+.rm-item .rm-ic svg{width:21px;height:21px}
+.rm-item h3{margin-bottom:3px}
+.rm-item p{margin:0;font-size:.92rem;color:var(--muted)}
+
+/* ============================================================
+   РЕАЛИСТИЧНЫЙ МОКАП ТЕЛЕФОНА + ЭКРАНЫ БИРЖ
+   (мокапы-иллюстрации интерфейсов, не живой UI)
+   ============================================================ */
+.exch-head{display:grid;grid-template-columns:1fr;gap:30px;align-items:center;margin-bottom:30px}
+.device-wrap{display:flex;flex-direction:column;align-items:center;gap:12px}
+.device{
+  width:256px;max-width:76vw;aspect-ratio:9/19.3;border-radius:44px;padding:11px;
+  background:linear-gradient(155deg,#262b44 0%,#0c0f1e 52%,#1a1f34 100%);
+  box-shadow:var(--shadow), inset 0 0 0 1px rgba(255,255,255,.08), inset 0 1px 2px rgba(255,255,255,.22);
+  position:relative;
+}
+.device .island{
+  position:absolute;top:20px;left:50%;transform:translateX(-50%);width:90px;height:25px;
+  background:#000;border-radius:14px;z-index:6;display:flex;align-items:center;justify-content:flex-end;
+  gap:7px;padding-right:11px;
+}
+.island .cam{width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#2c3c5e,#04060c)}
+.island .cam::after{content:"";position:absolute;width:4px;height:4px;border-radius:50%;background:#0a1530;transform:translate(2px,0)}
+.device .scr{height:100%;border-radius:33px;overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:"Manrope",sans-serif;font-size:11px}
+.statusbar{display:flex;justify-content:space-between;align-items:center;padding:13px 20px 7px;font-weight:700;font-size:12.5px;letter-spacing:.02em;flex:0 0 auto}
+.statusbar .sbr{display:flex;gap:6px;align-items:center}
+.statusbar svg{width:16px;height:11px;display:block}
+
+/* плавающие toast-уведомления для глубины */
+.floaty{
+  position:absolute;z-index:7;display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:13px;
+  background:rgba(16,20,34,.86);border:1px solid var(--border-strong);box-shadow:0 18px 34px -18px rgba(0,0,0,.8);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-size:.74rem;font-weight:700;color:var(--text);
+  animation:floaty 4.5s ease-in-out infinite;
+}
+.floaty .fic{width:24px;height:24px;border-radius:8px;display:grid;place-items:center;flex:0 0 auto}
+.floaty .fic svg{width:14px;height:14px}
+.floaty small{display:block;font-weight:500;color:var(--faint);font-size:.66rem;font-family:"JetBrains Mono"}
+@keyframes floaty{50%{transform:translateY(-8px)}}
+.floaty.green .fic{background:rgba(54,221,160,.16);color:var(--mint)}
+.floaty.gold .fic{background:rgba(255,201,60,.16);color:var(--gold)}
+
+.shotcap{display:inline-flex;align-items:center;gap:7px;font-family:"JetBrains Mono";font-size:.66rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);background:var(--card);border:1px solid var(--border);padding:5px 11px;border-radius:100px}
+.shotcap .dot{width:6px;height:6px;border-radius:50%;background:var(--mint)}
+
+/* --- BYBIT экран --- */
+.scr.bybit{background:#17181E;color:#EAECEF}
+.bb-top{display:flex;align-items:center;justify-content:space-between;padding:6px 14px 8px}
+.bb-logo{display:flex;align-items:center;gap:6px;font-family:"Unbounded";font-weight:800;font-size:14px;color:#fff}
+.bb-logo .mk{color:#F7A600;font-size:16px;line-height:1}
+.bb-logo small{font-weight:600;font-size:10px;color:#7A7F8A;font-family:"Manrope";align-self:center;margin-left:1px}
+.bb-top .gear{color:#7A7F8A}
+.bb-seg{display:flex;background:#0e0f14;border-radius:10px;padding:3px;margin:0 14px 10px}
+.bb-seg span{flex:1;text-align:center;padding:6px 0;border-radius:8px;font-weight:700;font-size:11px;color:#7A7F8A}
+.bb-seg span.on{background:#20B26C;color:#04130d}
+.bb-filters{display:flex;gap:6px;padding:0 14px 11px;flex-wrap:wrap}
+.bb-f{font-size:10px;color:#B7BDC6;background:#1F2128;border:1px solid #2a2c34;border-radius:8px;padding:5px 9px;display:flex;align-items:center;gap:4px}
+.bb-f.on{color:#F7A600;border-color:rgba(247,166,0,.45);background:rgba(247,166,0,.08)}
+.bb-list{display:flex;flex-direction:column;gap:9px;padding:0 12px 12px;overflow:hidden}
+.bb-ad{padding:12px;border-radius:14px;background:#1C1D24;border:1px solid #25262e}
+.bb-adh{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.bb-av{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#1a1200;font-size:13px;flex:0 0 auto}
+.bb-av.g{background:linear-gradient(135deg,#F7A600,#FF7A00)}
+.bb-av.v{background:linear-gradient(135deg,#8C7CFF,#54D6FF);color:#06121f}
+.bb-nm{font-weight:700;font-size:12px;display:flex;align-items:center;gap:5px;color:#fff;line-height:1.2}
+.bb-nm .vf{width:13px;height:13px;color:#20B26C}
+.bb-sub{font-size:9.5px;color:#7A7F8A;margin-top:2px;display:flex;align-items:center;gap:6px}
+.bb-sub .sq{width:6px;height:6px;border-radius:2px;background:#20B26C}
+.bb-price{display:flex;align-items:baseline;gap:5px;margin-bottom:8px}
+.bb-price b{font-size:23px;font-weight:800;color:#fff;letter-spacing:-.02em;font-family:"Manrope"}
+.bb-price .cur{font-size:11px;color:#8A8E99;font-weight:700}
+.bb-price .trend{margin-left:auto;font-size:9.5px;color:#20B26C;font-weight:700}
+.bb-mw{display:flex;flex-direction:column;gap:3px;font-size:9.5px;color:#8A8E99;margin-bottom:10px}
+.bb-mw b{color:#C9CDD4;font-weight:600}
+.bb-pays{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:11px}
+.bb-pay{font-size:9px;padding:3px 7px 3px 12px;border-radius:5px;position:relative;color:#C9CDD4;background:#26272f;font-weight:600}
+.bb-pay::before{content:"";position:absolute;left:5px;top:50%;transform:translateY(-50%);width:3px;height:58%;border-radius:2px}
+.bb-pay.tb::before{background:#FFDD2D}
+.bb-pay.sbp::before{background:linear-gradient(#21A038,#B620E0)}
+.bb-pay.sber::before{background:#21A038}
+.bb-pay.raif::before{background:#FEE600}
+.bb-buy{width:100%;padding:10px;border-radius:10px;background:#20B26C;color:#04130d;font-weight:800;font-size:12px;border:none;font-family:inherit}
+.bb-ad.mini{padding:10px 12px}
+.bb-ad.mini .bb-price b{font-size:18px}
+.bb-nav{margin-top:auto;display:flex;justify-content:space-around;padding:9px 0 11px;border-top:1px solid #222;color:#5b606b}
+.bb-nav span{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:8px}
+.bb-nav span.on{color:#F7A600}
+.bb-nav svg{width:18px;height:18px}
+
+/* --- RAPIRA экран --- */
+.scr.rapira{background:radial-gradient(130% 75% at 50% 0%,#16203a,#080b16);color:#E7ECF6}
+.rp-top{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 10px}
+.rp-logo{display:flex;align-items:center;gap:7px;font-family:"Unbounded";font-weight:700;font-size:15px;letter-spacing:-.01em}
+.rp-mk{width:22px;height:22px;display:grid;place-items:center;border-radius:7px;background:linear-gradient(135deg,#19D5A0,#11AFC6)}
+.rp-mk svg{width:14px;height:14px;color:#04201a}
+.rp-top .ava{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#FFC93C,#FF7A52)}
+.rp-tabs{display:flex;gap:5px;padding:0 14px 12px}
+.rp-tab{flex:1;text-align:center;font-size:10.5px;padding:7px 0;border-radius:9px;color:#8b93ad;font-weight:600;border:1px solid transparent}
+.rp-tab.on{background:rgba(25,213,160,.13);color:#19D5A0;border-color:rgba(25,213,160,.28)}
+.rp-card{margin:0 14px;padding:14px;border-radius:17px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);box-shadow:inset 0 1px 0 rgba(255,255,255,.07)}
+.rp-l{font-size:9.5px;color:#8b93ad;text-transform:uppercase;letter-spacing:.08em;font-family:"JetBrains Mono";margin-bottom:6px}
+.rp-field{display:flex;justify-content:space-between;align-items:center;background:#0a0e1c;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:11px 12px}
+.rp-field .val{font-size:19px;font-weight:800;letter-spacing:-.01em}
+.rp-field .val.muted{color:#19D5A0}
+.rp-cur{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;background:rgba(255,255,255,.07);padding:5px 9px;border-radius:9px;color:#E7ECF6}
+.rp-cur .ci{width:15px;height:15px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:800;color:#04201a}
+.rp-cur .ci.rub{background:#4C7CF6;color:#fff}
+.rp-cur .ci.usdt{background:#26A17B;color:#fff}
+.rp-swap{position:relative;height:0;display:flex;justify-content:center;z-index:2}
+.rp-swap span{position:absolute;top:-13px;width:28px;height:28px;border-radius:9px;background:#19D5A0;display:grid;place-items:center;box-shadow:0 6px 14px -4px rgba(25,213,160,.6);border:3px solid #0c1322}
+.rp-swap svg{width:14px;height:14px;color:#042018}
+.rp-rate{display:flex;align-items:center;justify-content:center;gap:7px;font-size:10px;color:#9aa3bd;font-family:"JetBrains Mono";margin:12px 0 11px}
+.rp-rate b{color:#E7ECF6}
+.rp-rate .sep{width:3px;height:3px;border-radius:50%;background:#4a5170}
+.rp-btn{width:100%;padding:12px;border-radius:12px;background:linear-gradient(100deg,#19D5A0,#11AFC6);color:#042018;font-weight:800;font-size:12.5px;border:none;font-family:inherit}
+.rp-ticker{margin:13px 14px 0;display:flex;flex-direction:column;gap:7px}
+.rp-tr{display:flex;align-items:center;justify-content:space-between;font-size:10.5px;padding:8px 11px;border-radius:11px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06)}
+.rp-tr .pr{font-weight:700;color:#E7ECF6}
+.rp-tr .pair{color:#9aa3bd}
+.rp-tr .up{color:#36DDA0;font-weight:700}
+.rp-tr .dn{color:#FF5C6C;font-weight:700}
+
+.exch-intro .badge{
+  display:inline-flex;align-items:center;gap:7px;font-family:"JetBrains Mono";font-size:.7rem;letter-spacing:.14em;
+  text-transform:uppercase;padding:6px 12px;border-radius:100px;margin-bottom:13px;
+}
+.exch-intro .badge .bd{width:7px;height:7px;border-radius:50%}
+.badge.warm{background:rgba(255,122,89,.14);color:var(--coral);border:1px solid rgba(255,122,89,.28)}
+.badge.warm .bd{background:var(--coral)}
+.badge.cool{background:rgba(247,166,0,.13);color:var(--gold);border:1px solid rgba(247,166,0,.28)}
+.badge.cool .bd{background:var(--gold)}
+.exch-intro h2{margin-bottom:10px;font-size:clamp(2rem,7vw,3rem)}
+.exch-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.exch-meta span{font-size:.78rem;color:var(--muted);background:var(--card);border:1px solid var(--border);padding:6px 11px;border-radius:100px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+
+/* ============================================================
+   ШАГИ
+   ============================================================ */
+.steps{display:grid;gap:14px}
+.step{
+  display:grid;grid-template-columns:auto 1fr;gap:16px;padding:18px;border-radius:var(--radius-sm);
+  background:var(--card);border:1px solid var(--border);position:relative;transition:border-color .25s, transform .25s;
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 var(--glass-hi);
+}
+.step:hover{border-color:var(--border-strong);transform:translateY(-2px)}
+.step .n{
+  width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex:0 0 auto;
+  font-family:"JetBrains Mono";font-weight:700;font-size:.92rem;color:#1a0e00;background:var(--grad-win);
+  box-shadow:0 8px 18px -8px rgba(255,150,60,.6);
+}
+.step.cool .n{background:var(--grad-cool);color:#06121f;box-shadow:0 8px 18px -8px rgba(124,108,255,.6)}
+.step h3{margin-bottom:5px;font-size:1.04rem}
+.step p{margin:0;font-size:.93rem;color:var(--muted)}
+.tip{
+  margin-top:10px;display:flex;gap:9px;align-items:flex-start;font-size:.84rem;color:#e7d9b6;
+  background:rgba(255,178,62,.07);border:1px solid rgba(255,178,62,.18);border-radius:11px;padding:9px 11px;
+}
+.tip svg{width:15px;height:15px;flex:0 0 auto;margin-top:3px;color:var(--amber)}
+.tip.cool{color:#cfe9ff;background:rgba(84,214,255,.07);border-color:rgba(84,214,255,.18)}
+.tip.cool svg{color:var(--cyan)}
+
+/* чекбокс выполнения */
+.done{display:inline-flex;align-items:center;gap:9px;margin-top:13px;cursor:pointer;user-select:none}
+.done input{position:absolute;opacity:0;width:0;height:0}
+.done .box{
+  width:22px;height:22px;border-radius:7px;border:2px solid var(--border-strong);
+  display:grid;place-items:center;transition:.2s;flex:0 0 auto;
+}
+.done .box svg{width:13px;height:13px;color:#06140d;opacity:0;transform:scale(.4);transition:.2s}
+.done input:checked + .box{background:var(--mint);border-color:var(--mint);box-shadow:0 0 0 4px rgba(54,221,160,.15)}
+.done input:checked + .box svg{opacity:1;transform:scale(1)}
+.done input:focus-visible + .box{outline:2px solid var(--cyan);outline-offset:2px}
+.done .txt{font-size:.86rem;font-weight:600;color:var(--muted);transition:.2s}
+.done input:checked ~ .txt{color:var(--mint)}
+
+/* ============================================================
+   ИНФОГРАФИКА БЕЗОПАСНОСТИ
+   ============================================================ */
+.grid2{display:grid;grid-template-columns:1fr;gap:12px}
+.sec-card{padding:18px;border-radius:var(--radius-sm);background:var(--card);border:1px solid var(--border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:inset 0 1px 0 var(--glass-hi);transition:transform .3s,border-color .3s}
+.sec-card:hover{transform:translateY(-3px);border-color:var(--border-strong)}
+.sec-card .ic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:rgba(84,214,255,.13);color:var(--cyan);margin-bottom:12px;box-shadow:inset 0 0 0 1px rgba(84,214,255,.18)}
+.sec-card .ic svg{width:21px;height:21px}
+.sec-card h3{font-size:1rem;margin-bottom:5px}
+.sec-card p{margin:0;font-size:.88rem;color:var(--muted)}
+
+/* ============================================================
+   БЛОКИРОВКИ Т1 / Т2
+   ============================================================ */
+.tier-grid{display:grid;grid-template-columns:1fr;gap:14px}
+.tier{border-radius:var(--radius);padding:20px;border:1px solid var(--border);background:var(--card);position:relative;overflow:hidden;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 var(--glass-hi)}
+.tier.t1{border-color:rgba(255,178,62,.32)}
+.tier.t1::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--amber)}
+.tier.t2{border-color:rgba(255,92,108,.32)}
+.tier.t2::before{content:"";position:absolute;inset:0 auto 0 0;width:4px;background:var(--red)}
+.tier .th{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.tier .tname{font-family:"Unbounded";font-weight:700;font-size:1.25rem}
+.tier.t1 .tname{color:var(--amber)}
+.tier.t2 .tname{color:var(--red)}
+.tier .law{font-family:"JetBrains Mono";font-size:.7rem;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);padding:4px 9px;border-radius:100px}
+.tier .desc{font-size:.92rem;color:var(--muted);margin-bottom:14px}
+.meter{height:7px;border-radius:7px;background:rgba(255,255,255,.07);overflow:hidden;margin-bottom:14px}
+.meter i{display:block;height:100%;border-radius:7px}
+.tier.t1 .meter i{width:35%;background:var(--amber)}
+.tier.t2 .meter i{width:92%;background:var(--red)}
+.tier ul{margin:0 0 14px;padding-left:0;list-style:none;display:grid;gap:8px}
+.tier li{font-size:.86rem;color:#d6d9ea;display:flex;gap:9px;align-items:flex-start}
+.tier li svg{width:15px;height:15px;flex:0 0 auto;margin-top:4px}
+.tier.t1 li svg{color:var(--amber)}
+.tier.t2 li svg{color:var(--red)}
+.tier .fix{font-size:.85rem;border-top:1px solid var(--border);padding-top:12px;color:var(--muted)}
+.tier .fix b{color:var(--text)}
+
+/* P2P-треугольник */
+.triangle{margin:22px 0;padding:20px;border-radius:var(--radius-sm);background:var(--card-2);border:1px solid var(--border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.triangle h3{margin-bottom:6px;font-size:1.02rem}
+.triangle p{font-size:.9rem;color:var(--muted);margin-bottom:16px}
+.tri-flow{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap}
+.tri-node{flex:1 1 0;min-width:90px;text-align:center;padding:14px 8px;border-radius:13px;background:var(--card);border:1px solid var(--border);font-size:.78rem;color:var(--muted)}
+.tri-node .emoji{font-size:1.4rem;display:block;margin-bottom:6px}
+.tri-node.you{border-color:rgba(255,92,108,.4);color:var(--text)}
+.tri-arrow{display:grid;place-items:center;color:var(--faint);font-size:1.1rem}
+
+/* профилактика-чеклист */
+.prevent{margin-top:22px;display:grid;gap:10px}
+.prevent .p-item{
+  display:grid;grid-template-columns:auto 1fr;gap:14px;align-items:start;padding:14px 16px;border-radius:var(--radius-sm);
+  background:var(--card);border:1px solid var(--border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);transition:transform .25s,border-color .25s;
+}
+.prevent .p-item:hover{transform:translateX(3px);border-color:var(--border-strong)}
+.prevent .p-item .pn{width:32px;height:32px;border-radius:10px;flex:0 0 auto;display:grid;place-items:center;background:rgba(54,221,160,.13);color:var(--mint);font-family:"JetBrains Mono";font-weight:700;font-size:.84rem;box-shadow:inset 0 0 0 1px rgba(54,221,160,.18)}
+.prevent .p-item h3{font-size:.98rem;margin-bottom:3px}
+.prevent .p-item p{margin:0;font-size:.87rem;color:var(--muted)}
+@media(min-width:720px){.prevent{grid-template-columns:1fr 1fr}}
+
+/* ============================================================
+   БОНУСЫ
+   ============================================================ */
+.bonus-tag{display:inline-flex;align-items:center;gap:8px;font-family:"JetBrains Mono";font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+.bonus-tag svg{width:15px;height:15px}
+.note-bubble{
+  background:linear-gradient(180deg,rgba(19,24,47,.8),rgba(16,20,42,.8));border:1px solid var(--border);border-radius:18px;
+  border-top-left-radius:6px;padding:18px 20px;position:relative;box-shadow:var(--shadow);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+}
+.note-bubble .nb-head{display:flex;align-items:center;gap:10px;margin-bottom:12px;font-size:.82rem;color:var(--muted)}
+.note-bubble .nb-ava{width:30px;height:30px;border-radius:50%;background:var(--grad-win);display:grid;place-items:center;font-weight:800;color:#1a0e00;font-size:.85rem}
+.tmpl{font-family:"JetBrains Mono";font-size:.84rem;line-height:1.75;color:#dfe2f3;white-space:pre-wrap;background:rgba(0,0,0,.28);border:1px solid var(--border);border-radius:12px;padding:14px 16px}
+.copy-btn{margin-top:12px;display:inline-flex;align-items:center;gap:8px;font-size:.82rem;font-weight:700;color:var(--gold);background:rgba(255,201,60,.1);border:1px solid rgba(255,201,60,.25);border-radius:100px;padding:8px 16px;cursor:pointer;font-family:inherit}
+.copy-btn:hover{background:rgba(255,201,60,.16)}
+.copy-btn svg{width:15px;height:15px}
+
+/* словарь */
+.gloss{display:grid;grid-template-columns:1fr;gap:10px;margin-top:8px}
+.gloss .g{padding:14px 16px;border-radius:var(--radius-sm);background:var(--card);border:1px solid var(--border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+.gloss .g dt{font-family:"Unbounded";font-weight:600;font-size:.92rem;color:var(--text);margin-bottom:3px}
+.gloss .g dd{margin:0;font-size:.85rem;color:var(--muted)}
+.gloss .g dt .tag{font-family:"JetBrains Mono";font-size:.62rem;color:var(--cyan);letter-spacing:.05em;margin-left:6px;vertical-align:middle}
+
+/* финальный чеклист готовности */
+.ready{margin-top:8px;display:grid;gap:10px}
+.ready .r{display:flex;gap:12px;align-items:center;padding:13px 16px;border-radius:var(--radius-sm);background:var(--card);border:1px solid var(--border);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* ============================================================
+   ФИНАЛ / ПРАЗДНОВАНИЕ
+   ============================================================ */
+#final{text-align:center;padding:64px 0}
+.final-box{
+  border-radius:30px;padding:40px 24px;border:1px solid var(--border);
+  background:radial-gradient(120% 100% at 50% 0%,rgba(255,201,60,.09),rgba(124,108,255,.06) 60%,transparent);
+  position:relative;overflow:hidden;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:inset 0 1px 0 var(--glass-hi)
+}
+.final-box.locked .unlocked{display:none}
+.final-box:not(.locked) .lockmsg{display:none}
+.lockmsg{color:var(--muted);font-size:.95rem}
+.bigring{--p:0;width:134px;height:134px;border-radius:50%;margin:0 auto 22px;
+  background:
+    radial-gradient(closest-side,var(--bg) 72%,transparent 73%),
+    conic-gradient(from 0deg, var(--gold), var(--coral) calc(var(--p)*0.6%), var(--violet) calc(var(--p)*1%), rgba(255,255,255,.08) 0);
+  display:grid;place-items:center;transition:--p .6s ease;
+}
+.bigring .pv{font-family:"Unbounded";font-weight:800;font-size:1.7rem}
+#final h2{font-size:clamp(2rem,7vw,3rem);font-weight:800;margin-bottom:14px}
+#final .fsub{color:var(--muted);max-width:38ch;margin:0 auto 26px}
+.next-card{
+  margin-top:30px;text-align:left;display:flex;gap:16px;align-items:center;padding:20px;
+  border-radius:var(--radius);background:var(--card);border:1px solid var(--border);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+}
+.next-card .nc-ic{width:48px;height:48px;border-radius:14px;flex:0 0 auto;display:grid;place-items:center;background:var(--grad-cool);color:#06121f;box-shadow:0 10px 22px -10px rgba(124,108,255,.6)}
+.next-card .nc-ic svg{width:23px;height:23px}
+.next-card .lbl{font-family:"JetBrains Mono";font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.next-card h3{font-size:1.05rem;margin:3px 0 2px}
+.next-card p{margin:0;font-size:.86rem;color:var(--muted)}
+
+/* footer */
+footer{padding:40px 0 60px;border-top:1px solid var(--border);margin-top:20px}
+.foot-brand{display:flex;align-items:center;gap:11px;margin-bottom:16px}
+.foot-brand .mark{width:34px;height:34px;border-radius:10px;background:var(--grad-win);display:grid;place-items:center;font-family:"Unbounded";font-weight:800;color:#1a0e00}
+.foot-brand .ft{font-family:"Unbounded";font-weight:700;font-size:1rem}
+.disc{font-size:.78rem;color:var(--faint);line-height:1.65}
+
+/* canvas конфетти */
+#confetti{position:fixed;inset:0;pointer-events:none;z-index:80;display:none}
+
+/* анимации появления */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.2,.7,.2,1),transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ============================================================
+   ДЕСКТОП
+   ============================================================ */
+@media(min-width:720px){
+  .grid2{grid-template-columns:1fr 1fr}
+  .tier-grid{grid-template-columns:1fr 1fr}
+  .gloss{grid-template-columns:1fr 1fr}
+  .exch-head{grid-template-columns:256px 1fr;gap:44px}
+  .exch-head.rev{grid-template-columns:1fr 256px}
+  .exch-head.rev .device-wrap{order:2}
+}
+
+/* ============================================================
+   ПРОИЗВОДИТЕЛЬНОСТЬ И СОВМЕСТИМОСТЬ
+   backdrop-filter оставляем только там, где под элементом реально
+   прокручивается контент (липкий бар, плавающие тосты). На остальных
+   карточках «стекло» держится на полупрозрачном фоне + светлой кромке —
+   это убирает тормоза и чёрные артефакты рендера на слабых устройствах.
+   ============================================================ */
+.glass,.card,.rm-item,.step,.sec-card,.tier,.triangle,.prevent .p-item,
+.gloss .g,.ready .r,.note-bubble,.next-card,.lesson-tag,.welcome,.tk,.chip,
+.exch-meta span,.final-box,.shotcap{backdrop-filter:none;-webkit-backdrop-filter:none}
+
+/* доступность */
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:6px}
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .reveal{opacity:1;transform:none}
+  .aurora b{animation:none!important}
+}
+</style>
+</head>
+<body>
+
+<div class="aurora" aria-hidden="true"><b class="a1"></b><b class="a2"></b><b class="a3"></b></div>
+<div class="grain" aria-hidden="true"></div>
+<div id="scrollbar"></div>
+
+<!-- ЛИПКИЙ БАР С ПРОГРЕССОМ -->
+<header id="topbar">
+  <div class="tb-brand"><span class="mk">A</span> УРОК <b>01</b> · Арбитраж с нуля</div>
+  <div class="tb-prog">
+    <span class="lbl"><b id="pct">0%</b> пройдено</span>
+    <div class="ring" id="ring"></div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <span class="lesson-tag"><span class="num">УРОК 1</span> Точка входа</span>
+    <h1>Твой <span class="grad">первый шаг</span><br>в арбитраж</h1>
+    <p class="sub">Сегодня ты заведёшь два рабочих аккаунта, настроишь защиту и поймёшь, из-за чего блокируют карты — чтобы это никогда не случилось с тобой.</p>
+
+    <!-- живой тикер курса -->
+    <div class="ticker" aria-hidden="true">
+      <span class="tk"><span class="live"></span> USDT/RUB <span class="px">92.40 ₽</span> <span class="up">▲ 0.4%</span></span>
+      <span class="tk">Rapira <span class="px">92.15 ₽</span></span>
+      <span class="tk">Bybit P2P <span class="px">92.55 ₽</span></span>
+      <span class="tk">спред <span class="px up">+0.43%</span></span>
+    </div>
+
+    <div class="welcome">
+      <p>Привет 👋 Поздравляю — ты уже сделала самое сложное: начала. Дальше я веду тебя за руку. Ничего не нужно знать заранее. Просто иди по шагам сверху вниз и отмечай галочками то, что сделала. В конце урока тебя ждёт приятный сюрприз 🎁</p>
+    </div>
+
+    <div class="chips">
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ~25–30 минут</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg> 6 блоков</span>
+      <span class="chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 18 0 9 9 0 0 0-18 0z"/><path d="M9 12l2 2 4-4"/></svg> для полного новичка</span>
+    </div>
+
+    <div class="scrollcue"><span class="mouse"></span> листай вниз — начинаем</div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- РОУДМАП -->
+<section>
+  <div class="wrap reveal">
+    <span class="sec-no">00 / КАРТА УРОКА</span>
+    <h2>Что ты освоишь сегодня</h2>
+    <p class="lead">Четыре навыка, которые превращают «я ничего не понимаю» в «у меня всё готово к первой сделке».</p>
+    <div class="roadmap">
+      <div class="rm-item">
+        <div class="rm-ic gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M7 14h4"/></svg></div>
+        <div><h3>Два рабочих аккаунта</h3><p>Rapira и Bybit — заводим оба, чтобы у тебя был выбор и запасной вариант.</p></div>
+      </div>
+      <div class="rm-item">
+        <div class="rm-ic cyan"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <div><h3>Защита аккаунта</h3><p>2FA, антифишинг и белый список — чтобы деньги нельзя было увести.</p></div>
+      </div>
+      <div class="rm-item">
+        <div class="rm-ic red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div>
+        <div><h3>Блокировки Т1 и Т2</h3><p>Что это, почему происходит и 9 правил, как не попасть под них.</p></div>
+      </div>
+      <div class="rm-item">
+        <div class="rm-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5"/><rect x="4" y="11" width="16" height="9" rx="2"/></svg></div>
+        <div><h3>Бонус-пакет</h3><p>Шпаргалка-ответ банку, словарь терминов и чеклист готовности.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- КОНЦЕПЦИЯ -->
+<section>
+  <div class="wrap reveal">
+    <span class="sec-no">01 / КОНТЕКСТ</span>
+    <h2>За 30 секунд: что такое арбитраж</h2>
+    <p>Если совсем коротко — ты покупаешь криптовалюту (чаще всего <b>USDT</b> — цифровой аналог доллара) там, где дешевле, и продаёшь там, где дороже. Разница и есть твоя прибыль. Всё это происходит на <b>биржах</b> — это площадки, где встречаются покупатели и продавцы.</p>
+    <p>Биржа — твой главный рабочий инструмент. Поэтому первый шаг любого арбитражника — завести аккаунт и сделать его безопасным. Мы берём <b>две лучшие площадки для России в 2026 году</b>, чтобы у тебя всегда была альтернатива, если на одной что-то пойдёт не так.</p>
+    <div class="card" style="margin-top:6px">
+      <p style="margin:0;font-size:.92rem;color:var(--muted)"><b style="color:var(--text)">Почему две, а не одна?</b> Курсы и условия на разных биржах отличаются — именно на этой разнице ты и зарабатываешь. Плюс если одна площадка временно недоступна, ты не теряешь день. Это база профессионала.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- RAPIRA -->
+<section>
+  <div class="wrap reveal">
+    <span class="sec-no">02 / БИРЖА №1</span>
+    <div class="exch-head">
+      <div class="device-wrap">
+        <div class="device" aria-hidden="true">
+          <div class="island"><span class="cam"></span></div>
+          <div class="scr rapira">
+            <div class="statusbar">
+              <span>9:41</span>
+              <span class="sbr">
+                <svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".4"/></svg>
+                <svg viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 4.5C3 2.5 5.3 1.5 8 1.5s5 1 7 3M3 7c1.4-1.3 3.1-2 5-2s3.6.7 5 2M5.2 9.4C6 8.7 6.9 8.3 8 8.3s2 .4 2.8 1.1"/><circle cx="8" cy="11" r=".7" fill="currentColor"/></svg>
+                <svg viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="3" stroke="currentColor" stroke-width="1" opacity=".5"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.5" fill="currentColor"/><rect x="22" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+              </span>
+            </div>
+            <div class="rp-top">
+              <div class="rp-logo"><span class="rp-mk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 19L19 5M14 5h5v5"/><circle cx="6" cy="18" r="2.4"/></svg></span> Rapira</div>
+              <span class="ava"></span>
+            </div>
+            <div class="rp-tabs"><span class="rp-tab on">Обмен</span><span class="rp-tab">P2P</span><span class="rp-tab">Биржа</span></div>
+            <div class="rp-card">
+              <div class="rp-l">Отдаёте</div>
+              <div class="rp-field"><span class="val">100 000</span><span class="rp-cur"><span class="ci rub">₽</span> RUB</span></div>
+              <div class="rp-swap"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v16M7 20l-3-3M17 20V4M17 4l3 3"/></svg></span></div>
+              <div class="rp-l" style="margin-top:12px">Получаете</div>
+              <div class="rp-field"><span class="val muted">1 082.25</span><span class="rp-cur"><span class="ci usdt">₮</span> USDT</span></div>
+              <div class="rp-rate"><span>1 USDT = <b>92.40 ₽</b></span><span class="sep"></span><span>СБП · 0% комиссия</span></div>
+              <button class="rp-btn">Обменять</button>
+            </div>
+            <div class="rp-ticker">
+              <div class="rp-tr"><span class="pair">USDT / RUB</span><span><span class="pr">92.40</span> <span class="up">▲ 0.4%</span></span></div>
+              <div class="rp-tr"><span class="pair">BTC / RUB</span><span><span class="pr">8 240 600</span> <span class="dn">▼ 0.2%</span></span></div>
+            </div>
+          </div>
+          <div class="floaty green" style="bottom:54px;right:-42px">
+            <span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span>
+            <span>Обмен выполнен<small>+1 082.25 USDT</small></span>
+          </div>
+        </div>
+        <span class="shotcap"><span class="dot"></span> Мокап интерфейса · Rapira 2026</span>
+      </div>
+      <div class="exch-intro">
+        <span class="badge warm"><span class="bd"></span> Российская площадка</span>
+        <h2>Rapira</h2>
+        <p class="lead">Биржа и P2P-обменник, заточенный под Россию и СНГ: рублёвые пары, оплата картой и через СБП, русский интерфейс и даже офлайн-офисы в ряде городов.</p>
+        <div class="exch-meta">
+          <span>🇷🇺 рублёвые пары</span><span>⚡ быстрый старт</span><span>🤝 P2P внутри</span><span>📲 Telegram-бот</span>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:14px">Регистрация по шагам</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="n">1</div>
+        <div>
+          <h3>Открой официальный сайт</h3>
+          <p>Зайди на <b>rapira.net</b> вручную, набрав адрес в браузере, и сразу добавь в закладки. Кнопка регистрации — справа вверху.</p>
+          <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg> Никогда не переходи на биржу по ссылке из рекламы, письма или чужого сообщения — только вручную или из закладки. Так клоны-двойники тебя не поймают.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <div>
+          <h3>Заполни форму</h3>
+          <p>Укажи свою почту, придумай <b>надёжный пароль</b> (длинный и уникальный, не как везде) и введи код подтверждения, который придёт на email. Реферальный код — по желанию.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <div>
+          <h3>Альтернатива: вход через Telegram</h3>
+          <p>Если так удобнее — открой бота <b>@RapiraNetBot</b> прямо в Telegram. Там есть мини-приложение с тем же функционалом: кошелёк, курс, обмен.</p>
+          <div class="tip cool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg> Совет: выбери что-то одно — сайт или бот — и привыкай. Меньше путаницы в начале.</div>
+          <label class="done track"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Аккаунт на Rapira создан</span></label>
+        </div>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <div>
+          <h3>Пройди верификацию (KYC)</h3>
+          <p>Для крипто-операций можно начать и так, но для <b>рублёвых операций и повышенных лимитов</b> нужна верификация. Подтверди почту и телефон кодом, затем в личном кабинете (или мини-приложении) загрузи документы — проверка проходит автоматически.</p>
+          <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> Делай это сразу — потом не придётся прерывать первую сделку из-за лимитов. Документы держи под рукой при хорошем освещении.</div>
+          <label class="done track"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Верификация на Rapira пройдена</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BYBIT -->
+<section>
+  <div class="wrap reveal">
+    <span class="sec-no">03 / БИРЖА №2</span>
+    <div class="exch-head rev">
+      <div class="exch-intro">
+        <span class="badge cool"><span class="bd"></span> Глобальный гигант</span>
+        <h2>Bybit</h2>
+        <p class="lead">Одна из крупнейших бирж мира, которая в 2026 году полноценно работает с россиянами: открывается без VPN, интерфейс на русском, российский паспорт принимается.</p>
+        <div class="exch-meta">
+          <span>🌍 огромная ликвидность</span><span>🔓 без VPN</span><span>💳 P2P за рубли</span><span>📱 приложение</span>
+        </div>
+      </div>
+      <div class="device-wrap">
+        <div class="device" aria-hidden="true">
+          <div class="island"><span class="cam"></span></div>
+          <div class="scr bybit">
+            <div class="statusbar" style="color:#fff">
+              <span>9:41</span>
+              <span class="sbr">
+                <svg viewBox="0 0 17 12" fill="currentColor"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".4"/></svg>
+                <svg viewBox="0 0 16 12" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M1 4.5C3 2.5 5.3 1.5 8 1.5s5 1 7 3M3 7c1.4-1.3 3.1-2 5-2s3.6.7 5 2M5.2 9.4C6 8.7 6.9 8.3 8 8.3s2 .4 2.8 1.1"/><circle cx="8" cy="11" r=".7" fill="currentColor"/></svg>
+                <svg viewBox="0 0 25 12" fill="none"><rect x="1" y="1" width="20" height="10" rx="3" stroke="currentColor" stroke-width="1" opacity=".5"/><rect x="2.5" y="2.5" width="15" height="7" rx="1.5" fill="currentColor"/><rect x="22" y="4" width="2" height="4" rx="1" fill="currentColor" opacity=".5"/></svg>
+              </span>
+            </div>
+            <div class="bb-top">
+              <div class="bb-logo"><span class="mk">◢</span> Bybit <small>P2P</small></div>
+              <span class="gear"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></span>
+            </div>
+            <div class="bb-seg"><span class="on">Купить</span><span>Продать</span></div>
+            <div class="bb-filters">
+              <span class="bb-f on">USDT</span>
+              <span class="bb-f">RUB <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></span>
+              <span class="bb-f">Сумма</span>
+              <span class="bb-f">Оплата <svg viewBox="0 0 24 24" width="8" height="8" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg></span>
+            </div>
+            <div class="bb-list">
+              <div class="bb-ad">
+                <div class="bb-adh">
+                  <span class="bb-av g">A</span>
+                  <div>
+                    <div class="bb-nm">AltynPay <svg class="vf" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.7 2.9-.2 1 2.8 2.4 1.6-.6 2.9.9 2.8-2.1 2-.5 2.9-2.9.4-2 2.1-2.7-1-2.7 1-2-2.1-2.9-.4-.5-2.9-2.1-2 .9-2.8-.6-2.9L4.7 6.3l1-2.8 2.9.2z"/><path d="M9 12l2 2 4-4" fill="none" stroke="#17181E" stroke-width="2.2"/></svg></div>
+                    <div class="bb-sub"><span class="sq"></span> 3 412 сделок · 99.7%</div>
+                  </div>
+                </div>
+                <div class="bb-price"><b>92.40</b><span class="cur">RUB</span><span class="trend">▲ 0.4%</span></div>
+                <div class="bb-mw"><span>Доступно <b>51 240 USDT</b></span><span>Лимит <b>5 000 – 800 000 ₽</b></span></div>
+                <div class="bb-pays"><span class="bb-pay tb">Т-Банк</span><span class="bb-pay sbp">СБП</span><span class="bb-pay sber">Сбербанк</span></div>
+                <button class="bb-buy">Купить USDT</button>
+              </div>
+              <div class="bb-ad mini">
+                <div class="bb-adh">
+                  <span class="bb-av v">C</span>
+                  <div>
+                    <div class="bb-nm">Crypto_Boss <svg class="vf" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 1.7 2.9-.2 1 2.8 2.4 1.6-.6 2.9.9 2.8-2.1 2-.5 2.9-2.9.4-2 2.1-2.7-1-2.7 1-2-2.1-2.9-.4-.5-2.9-2.1-2 .9-2.8-.6-2.9L4.7 6.3l1-2.8 2.9.2z"/><path d="M9 12l2 2 4-4" fill="none" stroke="#17181E" stroke-width="2.2"/></svg></div>
+                    <div class="bb-sub"><span class="sq"></span> 1 870 сделок · 98.9%</div>
+                  </div>
+                </div>
+                <div class="bb-price"><b>92.55</b><span class="cur">RUB</span></div>
+                <div class="bb-pays"><span class="bb-pay raif">Райффайзен</span><span class="bb-pay sbp">СБП</span></div>
+              </div>
+            </div>
+            <div class="bb-nav">
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-7 9 7M5 10v10h14V10"/></svg>Главная</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 18V9M9 18V5M14 18v-7M19 18V8"/></svg>Рынки</span>
+              <span class="on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h10M7 12h6M5 4h14v14l-3-2H5z"/></svg>P2P</span>
+              <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/></svg>Активы</span>
+            </div>
+          </div>
+          <div class="floaty gold" style="bottom:118px;left:-28px">
+            <span class="fic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></span>
+            <span>KYC Lv.1 пройден<small>верификация ✓</small></span>
+          </div>
+        </div>
+        <span class="shotcap"><span class="dot"></span> Мокап интерфейса · Bybit P2P 2026</span>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:14px">Регистрация по шагам</h3>
+    <div class="steps">
+      <div class="step cool">
+        <div class="n">1</div>
+        <div>
+          <h3>Зарегистрируйся за 2 минуты</h3>
+          <p>Открой <b>bybit.com</b> (или официальное приложение — скачивай только с сайта/официального стора, не сторонние APK). Регистрация по email или номеру телефона, придумай надёжный пароль.</p>
+          <div class="tip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg> Фейковые приложения и сайты-двойники — самая частая причина потери денег у новичков. Проверяй адрес посимвольно.</div>
+        </div>
+      </div>
+      <div class="step cool">
+        <div class="n">2</div>
+        <div>
+          <h3>Запусти верификацию (KYC)</h3>
+          <p>В 2026 KYC <b>обязателен</b> на всех легальных биржах — анонимной торговли больше нет, это норма, а не придирка к тебе. Зайди в <b>Центр учётной записи → Верификация личности (KYC)</b>, выбери «Личное лицо» и страну <b>Россия</b>.</p>
+        </div>
+      </div>
+      <div class="step cool">
+        <div class="n">3</div>
+        <div>
+          <h3>Загрузи паспорт и сделай селфи</h3>
+          <p>Выбери тип документа (российский паспорт принимается), загрузи фото разворота и пройди <b>проверку лица</b> через камеру. Указывай только реальные данные — фальсификация ведёт к блокировке.</p>
+          <div class="tip cool"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4z"/></svg> Для большинства задач достаточно первого уровня KYC — он открывает P2P, торговлю и вывод в обычных объёмах. Результат обычно за 10–15 минут (иногда до часа).</div>
+          <label class="done track"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Аккаунт Bybit создан и KYC отправлен</span></label>
+        </div>
+      </div>
+      <div class="step cool">
+        <div class="n">4</div>
+        <div>
+          <h3>Включи защиту сразу</h3>
+          <p>Не откладывай: настрой <b>2FA</b> и <b>антифишинг-код</b> ещё до пополнения (как — в следующем блоке). Это 5 минут, которые спасают весь баланс.</p>
+          <label class="done track"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Готова настраивать безопасность</span></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- БЕЗОПАСНОСТЬ -->
+<section>
+  <div class="wrap reveal">
+    <span class="sec-no">04 / ЗАЩИТА</span>
+    <h2>Безопасность аккаунта</h2>
+    <p class="lead">Биржа — это твой кошелёк. 90% потерь новичков — это не «рынок упал», а взлом и фишинг. Пройдись по этим шести правилам на обеих биржах.</p>
+    <div class="grid2">
+      <div class="sec-card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+        <h3>Уникальный пароль</h3>
+        <p>Длинный и только для этой биржи. Лучше всего — менеджер паролей. Один пароль на всё = одна дырка во всём.</p>
+      </div>
+      <div class="sec-card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg></div>
+        <h3>2FA через приложение</h3>
+        <p>Подключи Google Authenticator или Authy — не полагайся только на SMS, их перехватывают. Это главный замок аккаунта.</p>
+      </div>
+      <div class="sec-card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v4H4z"/><path d="M4 12h16M4 16h10"/></svg></div>
+        <h3>Антифишинг-код</h3>
+        <p>На Bybit задай личный код — он будет в каждом настоящем письме. Письмо без твоего кода = подделка, в корзину.</p>
+      </div>
+      <div class="sec-card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7 0l2-2a5 5 0 0 0-7-7l-1 1"/><path d="M14 11a5 5 0 0 0-7 0l-2 2a5 5 0 0 0 7 7l1-1"/></svg></div>
+        <h3>Только официальный домен</h3>
+        <p>Заходи из закладки. Не кликай ссылки из писем, рекламы и личных сообщений — там живут сайты-двойники.</p>
+      </div>
+      <div class="sec-card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/><circle cx="8" cy="6" r="1.5" fill="currentColor"/><circle cx="14" cy="12" r="1.5" fill="currentColor"/></svg></div>
+        <h3>Белый список вывода</h3>
+        <p>Включи whitelist адресов: вывод возможен только на заранее одобренные адреса. Даже взломщик не уведёт деньги «в никуда».</p>
+      </div>
+      <div class="sec-card">
+        <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg></div>
+        <h3>Биржа — не сейф</h3>
+        <p>Держи на бирже рабочую сумму, а не все сбережения. Никому никогда не сообщай коды из SMS/приложения и сид-фразу.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- БЛОКИРОВКИ Т1 / Т2 -->
+<section>
+  <div class="wrap reveal">
+    <span class="sec-no">05 / ГЛАВНОЕ</span>
+    <h2>Блокировки Т1 и Т2</h2>
+    <p class="lead">Тема, из-за которой новички теряют деньги и нервы. Разберём её до того, как ты сделаешь первую сделку — и тогда она тебя не коснётся. Делю блокировки на два уровня: мягкий (<b>Т1</b>) и жёсткий (<b>Т2</b>).</p>
+
+    <div class="tier-grid">
+      <div class="tier t1">
+        <div class="th"><span class="tname">Т1 · мягкая</span><span class="law">115-ФЗ</span></div>
+        <p class="desc">Банк приостановил <b>конкретную операцию</b> и просит документы о происхождении денег. Карта в целом жива. Это рабочий момент, а не катастрофа.</p>
+        <div class="meter"><i></i></div>
+        <p style="font-size:.8rem;color:var(--muted);margin:-4px 0 12px;font-family:'JetBrains Mono'">УРОВЕНЬ РИСКА: УПРАВЛЯЕМЫЙ</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/></svg> Много мелких поступлений от разных людей за короткое время</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/></svg> Переводы без понятной логики, резкий рост оборота</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5"/></svg> Размытые комментарии: «подарок», «возврат долга»</li>
+        </ul>
+        <div class="fix"><b>Что делать:</b> не паниковать. Спокойно предоставить пояснение и документы (скрины сделок, переписка с биржей, выписка). Чаще всего вопрос закрывается. Готовый шаблон ответа — в бонусах ниже.</div>
+      </div>
+
+      <div class="tier t2">
+        <div class="th"><span class="tname">Т2 · жёсткая</span><span class="law">161-ФЗ</span></div>
+        <p class="desc">Твои реквизиты попали в <b>базу подозрительных операций ЦБ</b> — обычно из-за жалобы контрагента. Блокируются все карты во всех банках сразу, пропадает онлайн-банк.</p>
+        <div class="meter"><i></i></div>
+        <p style="font-size:.8rem;color:var(--muted);margin:-4px 0 12px;font-family:'JetBrains Mono'">УРОВЕНЬ РИСКА: СЕРЬЁЗНЫЙ</p>
+        <ul>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> Покупатель оказался мошенником/жертвой и подал жалобу</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> Блок «по цепочке»: страдают даже добросовестные</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg> Снимается долго: обращения, иногда юрист и суд</li>
+        </ul>
+        <div class="fix"><b>Важно:</b> с лета 2025 поправки в ст. 187 УК криминализировали «дропов» — тех, кто отдаёт свою карту другим. Поэтому правило №1: <b>карта всегда только твоя и в твоих руках.</b></div>
+      </div>
+    </div>
+
+    <!-- P2P треугольник -->
+    <div class="triangle">
+      <h3>Откуда берётся Т2: «P2P-треугольник»</h3>
+      <p>Самый частый сценарий жёсткой блокировки. Понимание схемы = твоя страховка.</p>
+      <div class="tri-flow">
+        <div class="tri-node"><span class="emoji">🦹</span>Мошенник обманул жертву</div>
+        <div class="tri-arrow">→</div>
+        <div class="tri-node"><span class="emoji">🧑</span>Жертва шлёт деньги тебе (как «продавцу»)</div>
+        <div class="tri-arrow">→</div>
+        <div class="tri-node you"><span class="emoji">😟</span>Жертва пишет в банк «украли» → блок прилетает тебе</div>
+      </div>
+      <p style="margin:16px 0 0;font-size:.86rem;color:var(--muted)">Поэтому в P2P так важно работать только с проверенными контрагентами и фиксировать каждую сделку. Подробно технику безопасной P2P-сделки разберём в следующих уроках.</p>
+    </div>
+
+    <!-- ПРОФИЛАКТИКА -->
+    <h3 style="margin:6px 0 14px">9 правил, как не попасть под блокировки</h3>
+    <p class="lead" style="margin-bottom:18px">Главная идея проста: веди себя как обычный человек с чистыми деньгами — потому что ты им и являешься. Тогда алгоритмы банка тебя не пугаются.</p>
+    <div class="prevent">
+      <div class="p-item"><div class="pn">1</div><div><h3>Торгуй чисто</h3><p>Проверяй контрагента: рейтинг, отзывы, число сделок на бирже. Подозрительный — пропусти, спокойствие дороже.</p></div></div>
+      <div class="p-item"><div class="pn">2</div><div><h3>Без комментариев к переводам</h3><p>В P2P комментарий не нужен. Никаких «за крипту», «долг», «подарок» — это красные флаги для банка.</p></div></div>
+      <div class="p-item"><div class="pn">3</div><div><h3>Отдельная карта под работу</h3><p>Не используй зарплатную/основную карту. Заведи отдельную — так личные финансы под защитой.</p></div></div>
+      <div class="p-item"><div class="pn">4</div><div><h3>«Прогревай» рабочую карту</h3><p>Пусть по ней идут обычные траты — такси, продукты, связь, подписки. Живой профиль обычного человека вызывает меньше вопросов.</p></div></div>
+      <div class="p-item"><div class="pn">5</div><div><h3>Веди записи сделок</h3><p>Скрины, переписка с биржей, выписки. Это твоё доказательство, что деньги чистые, если банк вдруг спросит.</p></div></div>
+      <div class="p-item"><div class="pn">6</div><div><h3>Плати налоги</h3><p>С 1 января 2025 доход от операций с цифровой валютой облагается налогом. Белая история = минимум вопросов и спокойный сон.</p></div></div>
+      <div class="p-item"><div class="pn">7</div><div><h3>Никогда не будь «дропом»</h3><p>Не отдавай свою карту и доступ третьим лицам и не принимай чужие деньги «за процент». Теперь это уголовная статья.</p></div></div>
+      <div class="p-item"><div class="pn">8</div><div><h3>Наращивай объёмы плавно</h3><p>Не гони крупные суммы с первого дня. Постепенный рост выглядит естественно — резкий скачок настораживает.</p></div></div>
+      <div class="p-item"><div class="pn">9</div><div><h3>При запросе (Т1) — спокойно отвечай</h3><p>Получила запрос — не нервничай и не игнорируй. Вежливо предоставь документы по шаблону ниже. Чаще всего этого достаточно.</p></div></div>
+    </div>
+    <label class="done track" style="margin-top:18px"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Разобралась в Т1/Т2 и взяла правила на вооружение</span></label>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- БОНУСЫ -->
+<section>
+  <div class="wrap reveal">
+    <span class="bonus-tag"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v18M5 8l7-5 7 5"/><rect x="4" y="11" width="16" height="9" rx="2"/></svg> Бонусы урока</span>
+    <h2>Твой стартовый набор</h2>
+    <p class="lead">Три вещи, которые экономят часы и нервы. Сохрани их — пригодятся не раз.</p>
+
+    <!-- Шпаргалка -->
+    <h3 style="margin:24px 0 12px">🛟 Шпаргалка: что ответить банку при запросе (Т1)</h3>
+    <div class="note-bubble">
+      <div class="nb-head"><span class="nb-ava">Б</span> Шаблон пояснения · отредактируй под себя</div>
+      <div class="tmpl" id="bankTemplate">В ответ на ваш запрос от [дата] поясняю:
+
+Поступления на счёт — это мой доход от продажи собственной криптовалюты (USDT) через P2P-сервис биржи [название]. Деньги получены легально, в результате моих личных операций.
+
+К пояснению прилагаю:
+• скриншоты P2P-сделок,
+• выписку по счёту за [период],
+• подтверждения с биржи.
+
+Готов(а) предоставить дополнительные документы по запросу.
+С уважением, [ФИО]</div>
+      <button class="copy-btn" id="copyTpl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg> Скопировать шаблон</button>
+    </div>
+
+    <!-- Словарь -->
+    <h3 style="margin:30px 0 12px">📖 Мини-словарь арбитражника</h3>
+    <dl class="gloss">
+      <div class="g"><dt>USDT<span class="tag">стейблкоин</span></dt><dd>Криптовалюта, привязанная к доллару (1 USDT ≈ $1). Главный «рабочий» актив в арбитраже.</dd></div>
+      <div class="g"><dt>P2P<span class="tag">peer-to-peer</span></dt><dd>Сделки напрямую между людьми на бирже. Биржа выступает гарантом, держа крипту в эскроу.</dd></div>
+      <div class="g"><dt>KYC<span class="tag">верификация</span></dt><dd>«Знай своего клиента» — подтверждение личности паспортом и селфи. Обязательно почти везде.</dd></div>
+      <div class="g"><dt>2FA<span class="tag">защита</span></dt><dd>Двухфакторная аутентификация — второй код при входе/выводе. Главный замок аккаунта.</dd></div>
+      <div class="g"><dt>Спред<span class="tag">прибыль</span></dt><dd>Разница между ценой покупки и продажи. По сути — твой заработок на сделке.</dd></div>
+      <div class="g"><dt>Связка<span class="tag">маршрут</span></dt><dd>Конкретная цепочка «где купить → где продать» с прибылью. Сердце арбитража.</dd></div>
+      <div class="g"><dt>ДБО<span class="tag">банк</span></dt><dd>Дистанционное банковское обслуживание — твой онлайн-банк. Его и «отключают» при Т2.</dd></div>
+      <div class="g"><dt>Дроп<span class="tag">⚠️ опасно</span></dt><dd>Тот, кто отдаёт свою карту другим. С 2025 — уголовная статья. Никогда им не будь.</dd></div>
+    </dl>
+
+    <!-- Чеклист готовности -->
+    <h3 style="margin:30px 0 12px">✅ Чеклист готовности к первой сделке</h3>
+    <div class="ready">
+      <label class="done"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Оба аккаунта созданы и верифицированы</span></label>
+      <label class="done"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">2FA включена на обеих биржах</span></label>
+      <label class="done"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Заведена отдельная карта под работу</span></label>
+      <label class="done track"><input type="checkbox"><span class="box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg></span><span class="txt">Шаблон ответа банку сохранён</span></label>
+    </div>
+  </div>
+</section>
+
+<!-- ФИНАЛ -->
+<section id="final">
+  <div class="wrap reveal">
+    <div class="final-box locked" id="finalBox">
+      <div class="bigring" id="bigring"><span class="pv" id="bigpct">0%</span></div>
+
+      <!-- состояние "ещё не всё отмечено" -->
+      <p class="lockmsg">Отметь все ключевые шаги выше галочками ✓ — и я открою финал урока. Осталось совсем чуть-чуть 💪</p>
+
+      <!-- состояние "готово" -->
+      <div class="unlocked">
+        <span class="eyebrow" style="justify-content:center">УРОК 1 · ПРОЙДЕН</span>
+        <h2>Ты <span class="grad">молодец!</span></h2>
+        <p class="fsub">Серьёзно — большинство только думают «когда-нибудь начну». А ты уже завела рабочие аккаунты, защитила их и знаешь то, чего не знают даже многие «опытные». Это и есть первый шаг к результату.</p>
+      </div>
+
+      <div class="next-card">
+        <div class="nc-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+        <div>
+          <span class="lbl">Дальше · Урок 2</span>
+          <h3>Первая сделка: пополняем баланс и покупаем USDT</h3>
+          <p>Шаг за шагом проведём твою первую безопасную P2P-сделку от и до.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-brand">
+      <span class="mark">A</span>
+      <span class="ft">Арбитраж с нуля · Урок 1</span>
+    </div>
+    <p class="disc">
+      Материал носит обучающий характер и не является индивидуальной инвестиционной или финансовой рекомендацией. Операции с криптовалютой связаны с риском; решения ты принимаешь самостоятельно. Данные о биржах и законодательстве актуальны на середину 2026 года и могут меняться — перед действиями сверяйся с официальными сайтами площадок и актуальными требованиями. Условия Rapira и Bybit, лимиты и правила KYC проверяй в личном кабинете. Изображения интерфейсов бирж — иллюстративные мокапы, а не реальные снимки экрана. Соблюдай законодательство своей страны и плати налоги.
+    </p>
+  </div>
+</footer>
+
+<canvas id="confetti"></canvas>
+
+<script>
+/* ============================================================
+   Логика — про ощущение прогресса и удобства.
+   Без localStorage: состояние живёт в памяти на время сессии.
+   ============================================================ */
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* --- Полоса прокрутки сверху --- */
+  var bar = document.getElementById('scrollbar');
+  function onScroll(){
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var p = max>0 ? (h.scrollTop || document.body.scrollTop)/max*100 : 0;
+    bar.style.width = p + '%';
+  }
+  document.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  /* --- Появление секций при скролле --- */
+  var reveals = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target);} });
+    },{threshold:.12});
+    reveals.forEach(function(r){io.observe(r);});
+  } else {
+    reveals.forEach(function(r){r.classList.add('in');});
+  }
+
+  /* --- Прогресс по отмеченным ключевым шагам (.track) --- */
+  var tracked = document.querySelectorAll('.done.track input');
+  var total = tracked.length;
+  var ring = document.getElementById('ring');
+  var pctEl = document.getElementById('pct');
+  var bigring = document.getElementById('bigring');
+  var bigpct = document.getElementById('bigpct');
+  var finalBox = document.getElementById('finalBox');
+  var celebrated = false;
+
+  function update(){
+    var done = 0;
+    tracked.forEach(function(c){ if(c.checked) done++; });
+    var p = total ? Math.round(done/total*100) : 0;
+    ring.style.setProperty('--p', p);
+    pctEl.textContent = p + '%';
+    bigring.style.setProperty('--p', p);
+    bigpct.textContent = p + '%';
+
+    if(done >= total && total > 0){
+      finalBox.classList.remove('locked');
+      if(!celebrated){ celebrated = true; celebrate(); }
+    } else {
+      finalBox.classList.add('locked');
+      celebrated = false;
+    }
+  }
+  tracked.forEach(function(c){ c.addEventListener('change', update); });
+  update();
+
+  /* --- Кнопка "скопировать шаблон" --- */
+  var copyBtn = document.getElementById('copyTpl');
+  if(copyBtn){
+    copyBtn.addEventListener('click', function(){
+      var txt = document.getElementById('bankTemplate').innerText;
+      var ok = function(){
+        var orig = copyBtn.innerHTML;
+        copyBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12l5 5 9-11"/></svg> Скопировано!';
+        setTimeout(function(){ copyBtn.innerHTML = orig; }, 1800);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(ok).catch(fallback);
+      } else { fallback(); }
+      function fallback(){
+        var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);
+        ta.select();try{document.execCommand('copy');ok();}catch(e){}document.body.removeChild(ta);
+      }
+    });
+  }
+
+  /* --- Конфетти при завершении урока --- */
+  function celebrate(){
+    if(reduce) return;
+    var cv = document.getElementById('confetti');
+    var ctx = cv.getContext('2d');
+    cv.style.display='block';
+    var W = cv.width = window.innerWidth;
+    var H = cv.height = window.innerHeight;
+    var colors = ['#FFC93C','#FF7A59','#8C7CFF','#54D6FF','#36DDA0'];
+    var parts = [];
+    for(var i=0;i<140;i++){
+      parts.push({
+        x: W/2 + (Math.random()-0.5)*120,
+        y: H*0.32 + (Math.random()-0.5)*60,
+        vx:(Math.random()-0.5)*11,
+        vy:(Math.random()*-13)-4,
+        g:0.32+Math.random()*0.12,
+        s:5+Math.random()*7,
+        r:Math.random()*Math.PI,
+        vr:(Math.random()-0.5)*0.3,
+        c:colors[(Math.random()*colors.length)|0],
+        life:0
+      });
+    }
+    var start=null, DUR=2600;
+    function frame(t){
+      if(!start) start=t;
+      var el = t-start;
+      ctx.clearRect(0,0,W,H);
+      parts.forEach(function(p){
+        p.vy += p.g; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life++;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, 1 - el/DUR);
+        ctx.translate(p.x,p.y); ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.s/2,-p.s/2,p.s,p.s*0.6);
+        ctx.restore();
+      });
+      if(el < DUR){ requestAnimationFrame(frame); }
+      else { ctx.clearRect(0,0,W,H); cv.style.display='none'; }
+    }
+    requestAnimationFrame(frame);
+  }
+})();
+</script>
+</body>
+</html>
